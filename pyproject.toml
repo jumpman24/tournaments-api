@@ -10,7 +10,3 @@ source = ["app/"]
 profile = "black"
 line_length = 120
 lines_after_imports = 2
-
-[tool.pytest.ini_options]
-testpaths = ["app/tests"]
-addopts = "--cov -r a -v"

@@ -1,4 +1,5 @@
 alembic
+codecov
 coverage[toml]
 faker
 fastapi[all]
