@@ -11,8 +11,7 @@ from app.dependencies import get_db
 from app.main import app
 from app.models import Participant, Player, Tournament
 from app.settings import settings
-
-from .utils import participant_create_data, player_create_data, tournament_create_data
+from utils.mock_data import participant_create_data, player_create_data, tournament_create_data
 
 
 if settings.test_database_url.startswith("sqlite"):
