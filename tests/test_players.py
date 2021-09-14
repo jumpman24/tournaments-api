@@ -2,8 +2,7 @@ import json
 import random
 
 from app.schemas import PlayerSchema
-
-from .utils import player_create_data
+from utils.mock_data import player_create_data
 
 
 def test_list_players(test_client, players_url, db_players):

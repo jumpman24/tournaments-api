@@ -2,8 +2,7 @@ import json
 import random
 
 from app.schemas import TournamentSchema
-
-from .utils import tournament_create_data
+from utils.mock_data import tournament_create_data
 
 
 def test_list_tournaments(test_client, tournaments_url, db_tournaments):

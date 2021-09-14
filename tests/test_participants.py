@@ -4,8 +4,7 @@ import random
 import faker
 
 from app.schemas import ParticipantSchema
-
-from .utils import participant_create_data, participant_update_data
+from utils.mock_data import participant_create_data, participant_update_data
 
 
 fake = faker.Faker()
