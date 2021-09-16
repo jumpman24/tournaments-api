@@ -26,6 +26,7 @@ class TournamentSchema(BaseModel):
     country: str
     date_start: date
     date_end: date
+    total_participants: int
 
     class Config:
         orm_mode = True
@@ -36,5 +37,6 @@ class TournamentSchema(BaseModel):
                 "country": "UA",
                 "date_start": "2021-01-01",
                 "date_end": "2021-01-02",
+                "total_participants": 16,
             },
         }

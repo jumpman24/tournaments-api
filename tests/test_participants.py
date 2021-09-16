@@ -64,13 +64,11 @@ def test_update_participant(test_client, db_participants, participants_url):
     assert response.json() != not_expected
 
 
-def test_delete_participant(test_client, db_session, db_participants, participants_url):
+def test_delete_participant(test_client, db_participants, participants_url):
     participant = random.choice(db_participants)
-    expected = json.loads(ParticipantSchema.from_orm(participant).json())
 
     response = test_client.delete(f"{participants_url}/{participant.id}")
     assert response.ok
-    assert response.json() == expected
 
     response = test_client.get(f"{participants_url}/{participant.id}")
     assert response.status_code == 404
@@ -94,6 +92,15 @@ def test_create_participant_tournament_not_found(test_client, db_players, db_tou
     response = test_client.post(participants_url, json=create_data)
     assert response.status_code == 400
     assert response.json()["detail"] == "Tournament not found"
+
+
+def test_create_participant_duplicate(test_client, db_participants, participants_url):
+    participant = random.choice(db_participants)
+    create_data = json.loads(participant_create_data(participant.player_id, participant.tournament_id).json())
+
+    response = test_client.post(participants_url, json=create_data)
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Participant already exists"
 
 
 def test_get_participant_not_found(test_client, db_participants, participants_url):

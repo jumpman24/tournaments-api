@@ -17,7 +17,11 @@ class Player(Base):
     country = Column(String(255), nullable=False)
     rating = Column(RatingColumnType, nullable=False)
 
-    history = relationship("Participant", back_populates="player")
+    history = relationship("Participant", back_populates="player", cascade="all")
+
+    @property
+    def total_tournaments(self) -> int:
+        return len(self.history)
 
 
 class Tournament(Base):
@@ -30,7 +34,11 @@ class Tournament(Base):
     date_start = Column(Date, nullable=False)
     date_end = Column(Date, nullable=False)
 
-    participants = relationship("Participant", back_populates="tournament")
+    participants = relationship("Participant", back_populates="tournament", cascade="all")
+
+    @property
+    def total_participants(self) -> int:
+        return len(self.participants)
 
 
 class Participant(Base):

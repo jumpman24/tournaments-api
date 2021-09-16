@@ -27,11 +27,18 @@ async def create_participant(
     data: ParticipantCreateSchema,
     db: Session = Depends(get_db),
 ):
+    if not get_instance(db, Tournament, data.tournament_id):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Tournament not found")
+
     if not get_instance(db, Player, data.player_id):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Player not found")
 
-    if not get_instance(db, Tournament, data.tournament_id):
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Tournament not found")
+    filters = [
+        Participant.player_id == data.player_id,
+        Participant.tournament_id == data.tournament_id,
+    ]
+    if get_instances(db, Participant, filters):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Participant already exists")
 
     return create_instance(db, Participant, data)
 
