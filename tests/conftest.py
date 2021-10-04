@@ -6,12 +6,13 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
+from app.auth import get_password_hash
 from app.database import Base
 from app.dependencies import get_db
 from app.main import app
-from app.models import Participant, Player, Tournament
+from app.models import Participant, Player, Tournament, User
 from app.settings import settings
-from utils.mock_data import participant_create_data, player_create_data, tournament_create_data
+from utils.mock_data import participant_create_data, player_create_data, tournament_create_data, user_create_data
 
 
 if settings.test_database_url.startswith("sqlite"):
@@ -22,6 +23,7 @@ else:
 engine = create_engine(settings.test_database_url, connect_args=connect_args)
 SessionLocal = sessionmaker(engine, expire_on_commit=False)
 
+Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 fake = faker.Faker()
@@ -107,15 +109,39 @@ def db_participants(db_session, db_players, db_tournaments) -> List[Participant]
 
 
 @pytest.fixture
-def players_url() -> str:
-    return "/api/v1/players"
+def db_users(db_session) -> List[User]:
+    users_data = [user_create_data() for _ in range(3)]
+    users = [User(**{**user_data.dict(), "password": get_password_hash("password")}) for user_data in users_data]
+
+    db_session.add_all(users)
+    db_session.commit()
+
+    for user in users:
+        db_session.refresh(user)
+
+    yield users
+
+    for user in users:
+        db_session.delete(user)
+
+    db_session.commit()
 
 
 @pytest.fixture
-def tournaments_url() -> str:
-    return "/api/v1/tournaments"
+def base_url() -> str:
+    return "/api/v1"
 
 
 @pytest.fixture
-def participants_url() -> str:
-    return "/api/v1/participants"
+def players_url(base_url) -> str:
+    return f"{base_url}/players"
+
+
+@pytest.fixture
+def tournaments_url(base_url) -> str:
+    return f"{base_url}/tournaments"
+
+
+@pytest.fixture
+def participants_url(base_url) -> str:
+    return f"{base_url}/participants"

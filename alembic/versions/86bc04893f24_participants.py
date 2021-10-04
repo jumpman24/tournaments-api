@@ -24,13 +24,13 @@ def upgrade():
         sa.Column(
             "player_id",
             sa.Integer(),
-            sa.ForeignKey("players.id"),
+            sa.ForeignKey("players.id", ondelete="cascade"),
             nullable=False,
         ),
         sa.Column(
             "tournament_id",
             sa.Integer(),
-            sa.ForeignKey("tournaments.id"),
+            sa.ForeignKey("tournaments.id", ondelete="cascade"),
             nullable=False,
         ),
         sa.Column("declared_rating", sa.Numeric(precision=7, scale=3)),

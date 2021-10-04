@@ -11,8 +11,8 @@ def test_list_tournaments(test_client, tournaments_url, db_tournaments):
 
 
 def test_create_tournament(test_client, tournaments_url):
-    create_data = json.loads(tournament_create_data().json())
-    response = test_client.post(tournaments_url, json=create_data)
+    create_data = tournament_create_data().json()
+    response = test_client.post(tournaments_url, data=create_data)
     assert response.ok
     assert TournamentSchema.validate(response.json())
 
@@ -30,9 +30,9 @@ def test_update_tournament(test_client, tournaments_url, db_tournaments):
     tournament = random.choice(db_tournaments)
     not_expected = json.loads(TournamentSchema.from_orm(tournament).json())
 
-    update_data = json.loads(tournament_create_data().json())
+    update_data = tournament_create_data().json()
 
-    response = test_client.put(f"{tournaments_url}/{tournament.id}", json=update_data)
+    response = test_client.put(f"{tournaments_url}/{tournament.id}", data=update_data)
     assert response.ok
     assert response.json() != not_expected
 
@@ -70,9 +70,9 @@ def test_get_tournament_not_found(test_client, tournaments_url, db_tournaments):
 
 def test_update_tournament_not_found(test_client, tournaments_url, db_tournaments):
     fake_id = max(player.id for player in db_tournaments) + 1
-    update_data = json.loads(tournament_create_data().json())
+    update_data = tournament_create_data().json()
 
-    response = test_client.put(f"{tournaments_url}/{fake_id}", json=update_data)
+    response = test_client.put(f"{tournaments_url}/{fake_id}", data=update_data)
     assert response.status_code == 404
 
 

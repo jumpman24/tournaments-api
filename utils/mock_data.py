@@ -2,7 +2,13 @@ from datetime import timedelta
 
 import faker
 
-from app.schemas import ParticipantCreateSchema, ParticipantUpdateSchema, PlayerCreateSchema, TournamentCreateSchema
+from app.schemas import (
+    ParticipantCreateSchema,
+    ParticipantUpdateSchema,
+    PlayerCreateSchema,
+    TournamentCreateSchema,
+    UserCreateSchema,
+)
 
 
 fake = faker.Faker()
@@ -40,4 +46,12 @@ def participant_create_data(player_id: int, tournament_id: int):
 def participant_update_data():
     return ParticipantUpdateSchema(
         declared_rating=fake.random_int(100, 2700, 5),
+    )
+
+
+def user_create_data():
+    return UserCreateSchema(
+        username=fake.user_name(),
+        full_name=fake.name(),
+        password="password",
     )

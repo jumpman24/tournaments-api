@@ -13,9 +13,9 @@ def test_list_players(test_client, players_url, db_players):
 
 
 def test_create_player(test_client, players_url):
-    create_data = json.loads(player_create_data().json())
+    create_data = player_create_data().json()
 
-    response = test_client.post(players_url, json=create_data)
+    response = test_client.post(players_url, data=create_data)
     assert response.ok
     assert PlayerSchema.validate(response.json())
 
@@ -33,9 +33,9 @@ def test_update_player(test_client, players_url, db_players):
     player = random.choice(db_players)
     not_expected = json.loads(PlayerSchema.from_orm(player).json())
 
-    update_data = json.loads(player_create_data().json())
+    update_data = player_create_data().json()
 
-    response = test_client.put(f"{players_url}/{player.id}", json=update_data)
+    response = test_client.put(f"{players_url}/{player.id}", data=update_data)
     assert response.ok
     assert response.json() != not_expected
 
@@ -75,9 +75,9 @@ def test_get_player_not_found(test_client, players_url, db_players):
 def test_update_player_not_found(test_client, players_url, db_players):
     fake_id = max(player.id for player in db_players) + 1
 
-    update_data = json.loads(player_create_data().json())
+    update_data = player_create_data().json()
 
-    response = test_client.put(f"{players_url}/{fake_id}", json=update_data)
+    response = test_client.put(f"{players_url}/{fake_id}", data=update_data)
     assert response.status_code == 404
 
 

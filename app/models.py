@@ -55,3 +55,12 @@ class Participant(Base):
 
     player = relationship("Player", back_populates="history")
     tournament = relationship("Tournament", back_populates="participants")
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(255), nullable=False)
+    full_name = Column(String(255), nullable=False)
+    password = Column(String(255), nullable=False)

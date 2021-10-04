@@ -34,9 +34,9 @@ def test_filter_participants_by_tournament(test_client, participants_url, db_tou
 def test_create_participant(test_client, db_players, db_tournaments, participants_url):
     player = random.choice(db_players)
     tournament = random.choice(db_tournaments)
-    create_data = json.loads(participant_create_data(player.id, tournament.id).json())
+    create_data = participant_create_data(player.id, tournament.id).json()
 
-    response = test_client.post(participants_url, json=create_data)
+    response = test_client.post(participants_url, data=create_data)
     assert response.ok
     assert ParticipantSchema.validate(response.json())
 
@@ -53,9 +53,9 @@ def test_get_participant(test_client, db_participants, participants_url):
 def test_update_participant(test_client, db_participants, participants_url):
     participant = random.choice(db_participants)
     not_expected = ParticipantSchema.from_orm(participant)
-    update_data = json.loads(participant_update_data().json())
+    update_data = participant_update_data().json()
 
-    response = test_client.put(f"{participants_url}/{participant.id}", json=update_data)
+    response = test_client.put(f"{participants_url}/{participant.id}", data=update_data)
     assert response.ok
     assert response.json() != not_expected
 
@@ -77,9 +77,9 @@ def test_delete_participant(test_client, db_participants, participants_url):
 def test_create_participant_player_not_found(test_client, db_players, db_tournaments, participants_url):
     fake_player_id = max(player.id for player in db_players) + 1
     tournament = random.choice(db_tournaments)
-    create_data = json.loads(participant_create_data(fake_player_id, tournament.id).json())
+    create_data = participant_create_data(fake_player_id, tournament.id).json()
 
-    response = test_client.post(participants_url, json=create_data)
+    response = test_client.post(participants_url, data=create_data)
     assert response.status_code == 400
     assert response.json()["detail"] == "Player not found"
 
@@ -87,18 +87,18 @@ def test_create_participant_player_not_found(test_client, db_players, db_tournam
 def test_create_participant_tournament_not_found(test_client, db_players, db_tournaments, participants_url):
     player = random.choice(db_players)
     fake_tournament_id = max(tournament.id for tournament in db_tournaments) + 1
-    create_data = json.loads(participant_create_data(player.id, fake_tournament_id).json())
+    create_data = participant_create_data(player.id, fake_tournament_id).json()
 
-    response = test_client.post(participants_url, json=create_data)
+    response = test_client.post(participants_url, data=create_data)
     assert response.status_code == 400
     assert response.json()["detail"] == "Tournament not found"
 
 
 def test_create_participant_duplicate(test_client, db_participants, participants_url):
     participant = random.choice(db_participants)
-    create_data = json.loads(participant_create_data(participant.player_id, participant.tournament_id).json())
+    create_data = participant_create_data(participant.player_id, participant.tournament_id).json()
 
-    response = test_client.post(participants_url, json=create_data)
+    response = test_client.post(participants_url, data=create_data)
     assert response.status_code == 400
     assert response.json()["detail"] == "Participant already exists"
 
