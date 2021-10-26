@@ -1,37 +1,65 @@
 import asyncio
-from collections import defaultdict
-from typing import Dict, List
+from typing import AsyncIterator, Set
 
 from fastapi import WebSocket
+from pydantic import ValidationError
 
-from ..schemas.websocket import WebSocketMessage
+from ..loggers import logger
+from ..models import User
+from ..schemas import WebSocketMessage
+
+
+class Connection:
+    def __init__(self, websocket: WebSocket, user: User):
+        self.websocket = websocket
+        self.user = user
+
+    def __str__(self):
+        return str(self.websocket.client)
+
+    async def accept(self):
+        return await self.websocket.accept()
+
+    async def send_text(self, message: str):
+        await self.websocket.send_text(message)
+
+    def iter_text(self) -> AsyncIterator[str]:
+        return self.websocket.iter_text()
 
 
 class WebSocketManager:
-    connections: Dict[str, List[WebSocket]] = defaultdict(list)
+    websockets: Set[Connection] = set()
 
-    def __init__(self, websocket: WebSocket):
-        self.websocket = websocket
+    def __init__(self, websocket: WebSocket, user: User):
+        self.websocket = Connection(websocket, user)
 
     async def connect(self):
         await self.websocket.accept()
+        self.websockets.add(self.websocket)
+        logger.info(f"{self} connected")
 
-    async def disconnect(self):
-        for room, websockets in self.connections.items():
-            if websockets.remove(self.websocket):
-                await self.broadcast(room, {"action": "users.disconnect", "payload": "user-data"})
+    def disconnect(self):
+        self.websockets.remove(self.websocket)
+        logger.info(f"{self} disconnected")
 
-    def join_room(self, room: str):
-        self.connections[room].append(self.websocket)
+    async def send_personal_message(self, message: WebSocketMessage):
+        await self.websocket.send_text(message.json())
 
-    def leave_room(self, room: str):
-        self.connections[room].remove(self.websocket)
+    async def iter_message(self) -> AsyncIterator[WebSocketMessage]:
+        async for data in self.websocket.iter_text():
+            try:
+                yield WebSocketMessage.parse_raw(data)
+            except ValidationError:
+                pass
 
-    async def broadcast(self, room: str, message: dict):
-        tasks = [websocket.send_json(message) for websocket in self.connections[room]]
+    @staticmethod
+    async def send_message(websocket: Connection, message: WebSocketMessage):
+        await websocket.send_text(message.json())
+
+    @classmethod
+    async def broadcast(cls, message: WebSocketMessage):
+        tasks = [cls.send_message(websocket, message) for websocket in cls.websockets]
         await asyncio.gather(*tasks)
 
-    async def run(self):
-        async for message in self.websocket.iter_json():
-            data = WebSocketMessage.parse_obj(message)
-            await self.websocket.send_json({"action": "echo", "payload": data.payload})
+    def users_online(self) -> Set[User]:
+        return {websocket.user for websocket in self.websockets if websocket.user}

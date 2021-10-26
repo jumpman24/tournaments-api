@@ -3,6 +3,13 @@ import re
 from pydantic import BaseModel, ConstrainedStr
 
 
+def to_camel_case(snake_case: str) -> str:
+    camel_case, *words = snake_case.split("_")
+    for word in words:  # type: str
+        camel_case += word.capitalize()
+    return camel_case
+
+
 class UsernameStr(ConstrainedStr):
     strip_whitespace = True
     to_lower = True
@@ -30,6 +37,7 @@ class UserSchema(BaseModel):
 
     class Config:
         orm_mode = True
+        alias_generator = to_camel_case
 
 
 class TokenSchema(BaseModel):
