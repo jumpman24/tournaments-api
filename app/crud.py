@@ -1,23 +1,18 @@
-from typing import List, Type
+from typing import List, Type, TypeVar
 
-from pydantic import BaseModel
-from sqlalchemy import and_, select
-from sqlalchemy.orm import Session
-
-from .database import Base
+from sqlmodel import Session, SQLModel, and_, select
 
 
-def get_instance(db: Session, class_: Type[Base], instance_id: int) -> Base:
-    return db.get(class_, instance_id)
+_SQLModel = TypeVar("_SQLModel")
 
 
 def get_instances(
     db: Session,
-    class_: Type[Base],
+    class_: Type[_SQLModel],
     filters: list = None,
     offset: int = None,
     limit: int = None,
-) -> List[Base]:
+) -> List[_SQLModel]:
     stmt = select(class_)
 
     if filters:
@@ -32,16 +27,17 @@ def get_instances(
     return db.execute(stmt).scalars().all()
 
 
-def create_instance(db: Session, class_: Type[Base], data: BaseModel) -> Base:
-    instance = class_(**data.dict())
+def create_instance(db: Session, instance: _SQLModel) -> _SQLModel:
     db.add(instance)
     db.commit()
     db.refresh(instance)
     return instance
 
 
-def update_instance(db: Session, class_: Type[Base], instance_id: int, data: BaseModel) -> Base:
-    if instance := get_instance(db, class_, instance_id):
+def update_instance(
+    db: Session, class_: Type[_SQLModel], instance_id: int, data: SQLModel
+) -> _SQLModel:
+    if instance := db.get(class_, instance_id):
         for key, value in data:
             if hasattr(instance, key):
                 setattr(instance, key, value)
@@ -51,8 +47,10 @@ def update_instance(db: Session, class_: Type[Base], instance_id: int, data: Bas
     return instance
 
 
-def delete_instance(db: Session, class_: Type[Base], instance_id: int) -> Base:
-    if instance := get_instance(db, class_, instance_id):
+def delete_instance(
+    db: Session, class_: Type[_SQLModel], instance_id: int
+) -> _SQLModel:
+    if instance := db.get(class_, instance_id):
         db.delete(instance)
         db.commit()
     return instance

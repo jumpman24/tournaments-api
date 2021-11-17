@@ -1,7 +1,7 @@
 import logging
 
 
-logger = logging.getLogger("global_logger")
+logger = logging.getLogger("tournaments")
 ch = logging.StreamHandler()
 ch.setFormatter(
     logging.Formatter(

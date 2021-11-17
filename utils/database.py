@@ -8,7 +8,12 @@ from sqlalchemy.orm import Session, create_session
 from app.database import Base
 from app.models import Participant, Player, Tournament, User
 from app.settings import settings
-from utils.mock_data import participant_create_data, player_create_data, tournament_create_data, user_create_data
+from utils.mock_data import (
+    participant_create_data,
+    player_create_data,
+    tournament_create_data,
+    user_create_data,
+)
 
 
 def create_users(db: Session, amount: int = 100) -> List[User]:
@@ -45,7 +50,10 @@ def create_tournaments(db: Session, amount: int = 30) -> List[Tournament]:
 
 
 def create_participants(
-    db: Session, players: List[Player], tournaments: List[Tournament], amount: int = 16
+    db: Session,
+    players: List[Player],
+    tournaments: List[Tournament],
+    amount: int = 16,
 ) -> List[Participant]:
     participants = [
         Participant(**participant_create_data(player.id, tournament.id).dict())
@@ -63,11 +71,23 @@ def create_participants(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Populate database with mock data")
-    parser.add_argument("--database-url", type=str, help="Database URL", default=settings.database_url)
+    parser.add_argument(
+        "--database-url",
+        type=str,
+        help="Database URL",
+        default=settings.database_url,
+    )
     parser.add_argument("--users", type=int, default=10, help="Number of users")
     parser.add_argument("--players", type=int, default=100, help="Number of players")
-    parser.add_argument("--tournaments", type=int, default=30, help="Number of tournaments")
-    parser.add_argument("--participants", type=int, default=16, help="Number of participants per tournament")
+    parser.add_argument(
+        "--tournaments", type=int, default=30, help="Number of tournaments"
+    )
+    parser.add_argument(
+        "--participants",
+        type=int,
+        default=16,
+        help="Number of participants per tournament",
+    )
     args = parser.parse_args()
 
     print(f"Target database URL: {args.database_url}")
@@ -78,7 +98,9 @@ if __name__ == "__main__":
         exit()
 
     engine = create_engine(args.database_url)
-    session = create_session(engine, autoflush=True, future=True, expire_on_commit=False)
+    session = create_session(
+        engine, autoflush=True, future=True, expire_on_commit=False
+    )
 
     print("Dropping database...", end="")
     Base.metadata.drop_all(bind=engine)
@@ -91,5 +113,7 @@ if __name__ == "__main__":
     print("OK\nCreating tournaments...", end="")
     db_tournaments = create_tournaments(session, args.tournaments)
     print("OK\nCreating participants...", end="")
-    participants = create_participants(session, db_players, db_tournaments, args.participants)
+    participants = create_participants(
+        session, db_players, db_tournaments, args.participants
+    )
     print("OK")

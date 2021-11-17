@@ -7,8 +7,7 @@ import websockets
 from app.auth import create_token
 from app.database import SessionLocal
 from app.managers import DatabaseManager
-from app.models import User
-from app.schemas import WebSocketMessage
+from app.models import User, WebSocketMessage
 
 
 NUM_USERS = 100
@@ -22,7 +21,9 @@ def format_message(username: str, action: str, payload):
     global MAX_USERNAME_LENGTH, MAX_ACTION_LENGTH
     MAX_ACTION_LENGTH = max(MAX_ACTION_LENGTH, len(action))
     MAX_USERNAME_LENGTH = max(MAX_USERNAME_LENGTH, len(username))
-    print(f"{username:{MAX_USERNAME_LENGTH}s} [{action:{MAX_ACTION_LENGTH}s}] {payload}")
+    print(
+        f"{username:{MAX_USERNAME_LENGTH}s} [{action:{MAX_ACTION_LENGTH}s}] {payload}"
+    )
 
 
 async def connect_websocket(url_path, username, token: str = None):
@@ -54,7 +55,10 @@ async def run():
 
     while True:
         await asyncio.gather(
-            *[connect_websocket("ws://localhost:8000/websocket", username, token) for username, token in tokens.items()]
+            *[
+                connect_websocket("ws://localhost:8000/websocket", username, token)
+                for username, token in tokens.items()
+            ]
         )
 
 

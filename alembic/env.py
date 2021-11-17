@@ -2,14 +2,15 @@ import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
+from sqlmodel import SQLModel
 
 from alembic import context
-from app.models import Base
+from app.models import *  # noqa: F401, F403
 
 
 config = context.config
 fileConfig(config.config_file_name)
-target_metadata = Base.metadata
+target_metadata = SQLModel.metadata
 
 if database_url := os.getenv("DATABASE_URL"):
     database_url = database_url.replace("postgres://", "postgresql://")
