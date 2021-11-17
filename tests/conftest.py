@@ -7,9 +7,10 @@ from sqlmodel import Session, SQLModel, create_engine
 
 from app.dependencies import get_session
 from app.main import app
+from app.models import Tournament
 from app.models.player import Player
 from app.settings import settings
-from tests.helpers import player_create_data
+from tests.helpers import player_create_data, tournament_create_data
 
 
 if settings.test_database_url.startswith("sqlite"):
@@ -46,21 +47,33 @@ def db_session() -> Session:
 
 @pytest.fixture
 def db_players(db_session) -> List[Player]:
-    players = [Player(**player_create_data().dict()) for _ in range(3)]
+    players = [Player.from_orm(player_create_data()) for _ in range(3)]
     db_session.add_all(players)
     db_session.commit()
 
     for player in players:
         db_session.refresh(player)
 
-    yield players
+    return players
 
-    for player in players:
-        db_session.delete(player)
 
+@pytest.fixture
+def db_tournaments(db_session) -> List[Tournament]:
+    tournaments = [Tournament.from_orm(tournament_create_data()) for _ in range(3)]
+    db_session.add_all(tournaments)
     db_session.commit()
+
+    for tournament in tournaments:
+        db_session.refresh(tournament)
+
+    return tournaments
 
 
 @pytest.fixture
 def players_url() -> str:
     return "/api/v1/players"
+
+
+@pytest.fixture
+def tournaments_url() -> str:
+    return "/api/v1/tournaments"

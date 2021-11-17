@@ -1,5 +1,5 @@
 codecov==2.1.12
-coverage[toml]==5.5
-faker==8.12.1
+coverage[toml]==6.1.2
+faker==9.8.2
 pytest==6.2.5
-pytest-cov==2.12.1
+pytest-cov==3.0.0
