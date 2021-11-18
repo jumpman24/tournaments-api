@@ -34,6 +34,12 @@ def create_game(data: GameCreate, session: Session = Depends(get_session)):
     white = session.get(Participant, data.white_id)
     black = session.get(Participant, data.black_id)
 
+    if white.player_id == black.player_id:
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            "Participants cannot play against themselves",
+        )
+
     if white.tournament_id != black.tournament_id:
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST,

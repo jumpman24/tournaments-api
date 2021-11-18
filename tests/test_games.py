@@ -70,6 +70,12 @@ def test_delete_game(test_client, games_url, db_games):
     assert response.status_code == 404
 
 
+def test_list_games_bad_request(test_client, games_url, db_games):
+    response = test_client.get(f"{games_url}")
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Please provide player_id"
+
+
 def test_get_game_not_found(test_client, games_url, db_games):
     fake_id = max(game.id for game in db_games) + 1
 
@@ -82,7 +88,9 @@ def test_create_game_bad_request(
 ):
     tournament_1, tournament_2 = random.sample(db_tournaments, k=2)
     white = random.choice([p for p in db_participants if p.tournament is tournament_1])
-    black = random.choice([p for p in db_participants if p.tournament is tournament_2])
+    black = random.choice(
+        [p for p in db_participants if p.tournament is tournament_2 and p is not white]
+    )
 
     create_data = game_create_data(white, black, 0).json()
 
@@ -91,6 +99,31 @@ def test_create_game_bad_request(
     assert (
         response.json()["detail"] == "Participants should play in the same tournament"
     )
+
+
+def test_create_game_against_themselves(test_client, games_url, db_participants):
+    participant = random.choice(db_participants)
+
+    create_data = game_create_data(participant, participant, 0).json()
+
+    response = test_client.post(games_url, data=create_data)
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Participants cannot play against themselves"
+
+
+def test_create_game_already_played(
+    test_client, games_url, db_tournaments, db_games, db_participants
+):
+    game = random.choice(db_games)
+    opponent = random.choice(db_participants)
+
+    create_data = game_create_data(game.white, opponent, 0).json()
+
+    response = test_client.post(games_url, data=create_data)
+    assert response.status_code == 400
+
+    expected = "At least one of the participants has the game in the given round"
+    assert response.json()["detail"] == expected
 
 
 def test_update_game_not_found(test_client, games_url, db_games):
