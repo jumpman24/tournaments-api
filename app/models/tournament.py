@@ -3,7 +3,8 @@ from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
-class TournamentBase(SQLModel):
+class Tournament(SQLModel, table=True):
+    id: Optional[int] = Field(nullable=False, primary_key=True)
     name: str
     number_of_rounds: int
     mm_floor: int
@@ -14,18 +15,15 @@ class TournamentBase(SQLModel):
     handicap_correction: int
 
 
-class Tournament(TournamentBase, table=True):
-    id: Optional[int] = Field(nullable=False, primary_key=True)
-
-
-class TournamentCreate(TournamentBase):
-    number_of_rounds: int = 5
-    mm_floor: int = -20
-    mm_bar: int = 8
-    mm_dense: bool = True
-    handicap_bar: int = -30
-    handicap_max: int = 9
-    handicap_correction: int = -2
+class TournamentCreate(SQLModel):
+    name: str
+    number_of_rounds: int
+    mm_floor: int
+    mm_bar: int
+    mm_dense: bool
+    handicap_bar: int
+    handicap_max: int
+    handicap_correction: int
 
     class Config:
         schema_extra = {
@@ -42,8 +40,16 @@ class TournamentCreate(TournamentBase):
         }
 
 
-class TournamentRead(TournamentBase):
+class TournamentRead(SQLModel):
     id: int
+    name: str
+    number_of_rounds: int
+    mm_floor: int
+    mm_bar: int
+    mm_dense: bool
+    handicap_bar: int
+    handicap_max: int
+    handicap_correction: int
 
     class Config:
         schema_extra = {

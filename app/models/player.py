@@ -3,18 +3,18 @@ from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
-class PlayerBase(SQLModel):
+class Player(SQLModel, table=True):
+    id: Optional[int] = Field(nullable=False, primary_key=True)
     last_name: str
     first_name: str
     country: str
     rating: int
 
 
-class Player(PlayerBase, table=True):
-    id: Optional[int] = Field(nullable=False, primary_key=True)
-
-
-class PlayerCreate(PlayerBase):
+class PlayerCreate(SQLModel):
+    last_name: str
+    first_name: str
+    country: str
     rating: int = 100
 
     class Config:
@@ -28,8 +28,12 @@ class PlayerCreate(PlayerBase):
         }
 
 
-class PlayerRead(PlayerBase):
+class PlayerRead(SQLModel):
     id: int
+    last_name: str
+    first_name: str
+    country: str
+    rating: int
 
     class Config:
         schema_extra = {
