@@ -1,7 +1,7 @@
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import participants, players, tournaments
+from app.routers import games, participants, players, tournaments
 
 
 app = FastAPI(debug=True, title="Tournaments API")
@@ -17,6 +17,7 @@ v1_router = APIRouter(prefix="/api/v1")
 v1_router.include_router(players.router)
 v1_router.include_router(tournaments.router)
 v1_router.include_router(participants.router)
+v1_router.include_router(games.router)
 app.include_router(v1_router)
 
 if __name__ == "__main__":

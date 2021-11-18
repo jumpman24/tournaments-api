@@ -8,7 +8,7 @@ from .loggers import logger
 _SQLModel = TypeVar("_SQLModel")
 
 
-def get_instances(
+def select_instances(
     db: Session,
     class_: Type[_SQLModel],
     *,
@@ -19,10 +19,11 @@ def get_instances(
     if filters:
         stmt = stmt.where(and_(*filters))
 
-    return db.execute(stmt).scalars().all()
+    instances = db.execute(stmt).scalars().all()
+    return instances
 
 
-def create_instance(db: Session, instance: _SQLModel) -> _SQLModel:
+def insert_instance(db: Session, instance: _SQLModel) -> _SQLModel:
     logger.info(f"Creating instance {repr(instance)}")
     db.add(instance)
     db.commit()

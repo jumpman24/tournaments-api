@@ -1,6 +1,11 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+
+if TYPE_CHECKING:
+    from .player import Player
+    from .tournament import Tournament
 
 
 class Participant(SQLModel, table=True):
@@ -10,6 +15,9 @@ class Participant(SQLModel, table=True):
     rating: int
     start_mms: int
     is_final: bool
+
+    player: "Player" = Relationship(back_populates="participants")
+    tournament: "Tournament" = Relationship(back_populates="participants")
 
 
 class ParticipantCreate(SQLModel):

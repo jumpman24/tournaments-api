@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
-from ..crud import create_instance, delete_instance, get_instances, update_instance
+from ..crud import delete_instance, insert_instance, select_instances, update_instance
 from ..dependencies import get_session
 from ..models.participant import (
     Participant,
@@ -31,7 +31,9 @@ async def read_participants(
         filters.append(Participant.tournament_id == tournament_id)
     if player_id:
         filters.append(Participant.player_id == player_id)
-    return get_instances(session, Participant, filters=filters)
+
+    participants = select_instances(session, Participant, filters=filters)
+    return participants
 
 
 @router.post("/participants", response_model=ParticipantRead)
@@ -39,8 +41,8 @@ def create_participant(
     data: ParticipantCreate,
     session: Session = Depends(get_session),
 ):
-    tournament = create_instance(session, Participant.from_orm(data))
-    return tournament
+    participant = insert_instance(session, Participant.from_orm(data))
+    return participant
 
 
 @router.get("/participants/{participant_id}", response_model=ParticipantRead)

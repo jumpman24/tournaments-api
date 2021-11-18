@@ -1,6 +1,8 @@
-from typing import Optional
+from typing import List, Optional
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+from .participant import Participant
 
 
 class Tournament(SQLModel, table=True):
@@ -13,6 +15,8 @@ class Tournament(SQLModel, table=True):
     handicap_bar: int
     handicap_max: int
     handicap_correction: int
+
+    participants: List["Participant"] = Relationship(back_populates="tournament")
 
 
 class TournamentCreate(SQLModel):

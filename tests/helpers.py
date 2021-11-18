@@ -1,6 +1,9 @@
 import faker
+from mcmahon.game import Result
 
 from app.models import (
+    GameCreate,
+    Participant,
     ParticipantCreate,
     Player,
     PlayerCreate,
@@ -41,4 +44,15 @@ def participant_create_data(tournament: Tournament, player: Player):
         rating=player.rating,
         start_mms=0,
         is_final=False,
+    )
+
+
+def game_create_data(white: Participant, black: Participant, round_number: int):
+    return GameCreate(
+        white_id=white.id,
+        black_id=black.id,
+        round_number=round_number,
+        handicap=0,
+        result=Result.UNKNOWN,
+        by_default=False,
     )

@@ -1,6 +1,8 @@
-from typing import Optional
+from typing import List, Optional
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+from .participant import Participant
 
 
 class Player(SQLModel, table=True):
@@ -9,6 +11,8 @@ class Player(SQLModel, table=True):
     first_name: str
     country: str
     rating: int
+
+    participants: List["Participant"] = Relationship(back_populates="player")
 
 
 class PlayerCreate(SQLModel):

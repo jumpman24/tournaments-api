@@ -7,9 +7,10 @@ from sqlmodel import Session, SQLModel, create_engine
 
 from app.dependencies import get_session
 from app.main import app
-from app.models import Participant, Player, Tournament
+from app.models import Game, Participant, Player, Tournament
 from app.settings import settings
 from tests.helpers import (
+    game_create_data,
     participant_create_data,
     player_create_data,
     tournament_create_data,
@@ -92,6 +93,39 @@ def db_participants(db_session, db_players, db_tournaments) -> List[Participant]
 
 
 @pytest.fixture
+def db_games(db_session, db_participants) -> List[Game]:
+    games = []
+
+    game_counts = {}
+    for idx, participant in enumerate(db_participants[:-1]):
+        game_counts.setdefault(participant.id, 0)
+        if game_counts[participant.id] > 5:
+            continue
+        for opponent in db_participants[idx + 1 :]:
+            game_counts.setdefault(opponent.id, 0)
+            if game_counts[opponent.id] > 5:
+                continue
+            if participant.tournament_id == opponent.tournament_id:
+                games.append(
+                    Game.from_orm(
+                        game_create_data(
+                            participant, opponent, game_counts[participant.id]
+                        )
+                    )
+                )
+                game_counts[participant.id] += 1
+                game_counts[opponent.id] += 1
+
+    db_session.add_all(games)
+    db_session.commit()
+
+    for game in games:
+        db_session.refresh(game)
+
+    return games
+
+
+@pytest.fixture
 def players_url() -> str:
     return "/api/v1/players"
 
@@ -104,3 +138,8 @@ def tournaments_url() -> str:
 @pytest.fixture
 def participants_url() -> str:
     return "/api/v1/participants"
+
+
+@pytest.fixture
+def games_url() -> str:
+    return "/api/v1/games"
