@@ -13,7 +13,7 @@ from ..models.participant import (
 )
 
 
-router = APIRouter(tags=["tournaments"])
+router = APIRouter(tags=["participants"])
 
 
 @router.get("/participants", response_model=List[ParticipantRead])
