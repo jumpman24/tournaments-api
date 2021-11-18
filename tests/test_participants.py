@@ -13,11 +13,6 @@ def test_list_participants(
     db_tournaments,
     db_participants,
 ):
-    response = test_client.get(participants_url)
-    assert response.ok
-    for item in response.json():
-        assert ParticipantRead.validate(item)
-
     tournament = random.choice(db_tournaments)
     player = random.choice(db_players)
 
@@ -98,6 +93,18 @@ def test_delete_participant(test_client, participants_url, db_participants):
 
     response = test_client.get(f"{participants_url}/{participant.id}")
     assert response.status_code == 404
+
+
+def test_list_participants_bad_request(
+    test_client,
+    participants_url,
+    db_players,
+    db_tournaments,
+    db_participants,
+):
+    response = test_client.get(participants_url)
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Please provide tournament_id or player_id"
 
 
 def test_get_participant_not_found(test_client, participants_url, db_participants):

@@ -22,6 +22,10 @@ async def read_participants(
     player_id: int = None,
     session: Session = Depends(get_session),
 ):
+    if not tournament_id and not player_id:
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST, "Please provide tournament_id or player_id"
+        )
     filters = []
     if tournament_id:
         filters.append(Participant.tournament_id == tournament_id)
