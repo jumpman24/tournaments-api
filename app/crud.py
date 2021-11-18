@@ -9,6 +9,7 @@ _SQLModel = TypeVar("_SQLModel")
 def get_instances(
     db: Session,
     class_: Type[_SQLModel],
+    *,
     filters: list = None,
     offset: int = None,
     limit: int = None,

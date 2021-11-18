@@ -3,27 +3,33 @@ from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
-class ParticipantBase(SQLModel):
-    player_id: int
-    tournament_id: int
-    start_mms: int
-    absent_rounds: set[int]
-    bye_rounds: set[int]
-    is_final: bool
-
-
-class Participant(ParticipantBase, table=True):
+class Participant(SQLModel, table=True):
     id: Optional[int] = Field(nullable=False, primary_key=True)
     player_id: int = Field(foreign_key="player.id")
     tournament_id: int = Field(foreign_key="tournament.id")
+    rating: int
+    start_mms: int
+    is_final: bool
 
 
-class ParticipantCreate(ParticipantBase):
-    start_mms: int = 0
-    absent_rounds: set[int] = set()
-    bye_rounds: set[int] = set()
-    is_final: bool = False
+class ParticipantCreate(SQLModel):
+    player_id: int
+    tournament_id: int
+    rating: int
+    start_mms: int
+    is_final: bool
 
 
-class ParticipantRead(ParticipantBase):
+class ParticipantUpdate(SQLModel):
+    rating: int
+    start_mms: int
+    is_final: bool
+
+
+class ParticipantRead(SQLModel):
     id: int
+    player_id: int
+    tournament_id: int
+    rating: int
+    start_mms: int
+    is_final: bool

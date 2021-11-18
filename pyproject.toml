@@ -10,3 +10,29 @@ source = ["app/"]
 profile = "black"
 line_length = 88
 lines_after_imports = 2
+
+[tool.poetry]
+name = "mcmahon-tournaments"
+version = "0.1.0"
+description = "McMahon Tournament API"
+authors = ["Oleksandr Hiliazov <oleksandr.hiliazov@eleks.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+fastapi = {extras = ["all"], version = "^0.70.0"}
+alembic = "^1.7.5"
+sqlmodel = "^0.0.4"
+psycopg2-binary = "^2.9.2"
+gunicorn = "^20.1.0"
+mcmahon = "^0.1.0"
+
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+pytest-cov = "^3.0.0"
+Faker = "^9.8.2"
+pre-commit = "^2.15.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
