@@ -18,6 +18,33 @@ def test_list_participants(
     for item in response.json():
         assert ParticipantRead.validate(item)
 
+    tournament = random.choice(db_tournaments)
+    player = random.choice(db_players)
+
+    response = test_client.get(
+        participants_url, params={"tournament_id": tournament.id}
+    )
+    assert response.ok
+    for item in response.json():
+        assert ParticipantRead.validate(item)
+        assert item["tournament_id"] == tournament.id
+
+    response = test_client.get(participants_url, params={"player_id": player.id})
+    assert response.ok
+    for item in response.json():
+        assert ParticipantRead.validate(item)
+        assert item["player_id"] == player.id
+
+    response = test_client.get(
+        participants_url,
+        params={"tournament_id": tournament.id, "player_id": player.id},
+    )
+    assert response.ok
+    for item in response.json():
+        assert ParticipantRead.validate(item)
+        assert item["tournament_id"] == tournament.id
+        assert item["player_id"] == player.id
+
 
 def test_create_participant(test_client, participants_url, db_players, db_tournaments):
     tournament = random.choice(db_tournaments)

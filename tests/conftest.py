@@ -1,4 +1,3 @@
-import random
 from typing import List
 
 import faker
@@ -78,7 +77,7 @@ def db_participants(db_session, db_players, db_tournaments) -> List[Participant]
     participants = []
 
     for tournament in db_tournaments:
-        for player in random.sample(db_players, k=8):
+        for player in db_players:
             participants.append(
                 Participant.from_orm(participant_create_data(tournament, player))
             )
