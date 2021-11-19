@@ -25,6 +25,7 @@ sqlmodel = "^0.0.4"
 psycopg2-binary = "^2.9.2"
 gunicorn = "^20.1.0"
 mcmahon = "^0.1.0"
+coverage = {extras = ["yaml"], version = "^6.1.2"}
 
 
 [tool.poetry.dev-dependencies]
