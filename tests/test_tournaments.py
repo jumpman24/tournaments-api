@@ -1,6 +1,7 @@
 import json
 import random
 
+from app.models import ParticipantRead
 from app.models.tournament import TournamentRead
 from tests.helpers import tournament_create_data
 
@@ -76,4 +77,27 @@ def test_delete_tournament_not_found(test_client, tournaments_url, db_tournament
     fake_id = max(tournament.id for tournament in db_tournaments) + 1
 
     response = test_client.delete(f"{tournaments_url}/{fake_id}")
+    assert response.status_code == 404
+
+
+def test_get_tournament_participants(
+    test_client, tournaments_url, db_tournaments, db_participants
+):
+    tournament = random.choice(db_tournaments)
+    expected = [
+        json.loads(ParticipantRead.from_orm(participant).json())
+        for participant in tournament.participants
+    ]
+
+    response = test_client.get(f"{tournaments_url}/{tournament.id}/participants")
+    assert response.ok
+    assert response.json() == expected
+
+
+def test_get_tournament_participants_not_found(
+    test_client, tournaments_url, db_tournaments
+):
+    fake_id = max(tournament.id for tournament in db_tournaments) + 1
+
+    response = test_client.get(f"{tournaments_url}/{fake_id}/participants")
     assert response.status_code == 404

@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
@@ -16,7 +14,7 @@ from ..models.participant import (
 router = APIRouter(tags=["participants"])
 
 
-@router.get("/participants", response_model=List[ParticipantRead])
+@router.get("/participants", response_model=list[ParticipantRead])
 async def read_participants(
     tournament_id: int = None,
     player_id: int = None,

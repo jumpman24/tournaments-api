@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
@@ -11,7 +9,7 @@ from ..models.player import Player, PlayerCreate, PlayerRead
 router = APIRouter(tags=["players"])
 
 
-@router.get("/players", response_model=List[PlayerRead])
+@router.get("/players", response_model=list[PlayerRead])
 async def read_players(session: Session = Depends(get_session)):
     players = select_instances(session, Player)
     return players

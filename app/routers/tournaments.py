@@ -1,17 +1,16 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
 from ..crud import delete_instance, insert_instance, select_instances, update_instance
 from ..dependencies import get_session
+from ..models import ParticipantRead
 from ..models.tournament import Tournament, TournamentCreate, TournamentRead
 
 
 router = APIRouter(tags=["tournaments"])
 
 
-@router.get("/tournaments", response_model=List[TournamentRead])
+@router.get("/tournaments", response_model=list[TournamentRead])
 async def read_tournaments(session: Session = Depends(get_session)):
     tournaments = select_instances(session, Tournament)
     return tournaments
@@ -50,4 +49,16 @@ async def delete_tournament(
 ):
     if tournament := delete_instance(session, Tournament, tournament_id):
         return tournament
+    raise HTTPException(status.HTTP_404_NOT_FOUND)
+
+
+@router.get(
+    "/tournaments/{tournament_id}/participants", response_model=list[ParticipantRead]
+)
+async def read_tournament_participants(
+    tournament_id: int,
+    session: Session = Depends(get_session),
+):
+    if tournament := session.get(Tournament, tournament_id):
+        return tournament.participants
     raise HTTPException(status.HTTP_404_NOT_FOUND)

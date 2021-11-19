@@ -7,9 +7,8 @@ from app.models.game import GameRead, GameUpdate
 from tests.helpers import game_create_data
 
 
-def test_list_games(test_client, games_url, db_games, db_players):
-    player = random.choice(db_players)
-    response = test_client.get(games_url, params={"player_id": player.id})
+def test_list_games(test_client, games_url, db_games):
+    response = test_client.get(games_url)
     assert response.ok
     for item in response.json():
         assert GameRead.validate(item)
@@ -70,12 +69,6 @@ def test_delete_game(test_client, games_url, db_games):
     assert response.status_code == 404
 
 
-def test_list_games_bad_request(test_client, games_url, db_games):
-    response = test_client.get(f"{games_url}")
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Please provide player_id"
-
-
 def test_get_game_not_found(test_client, games_url, db_games):
     fake_id = max(game.id for game in db_games) + 1
 
@@ -115,9 +108,15 @@ def test_create_game_already_played(
     test_client, games_url, db_tournaments, db_games, db_participants
 ):
     game = random.choice(db_games)
-    opponent = random.choice(db_participants)
+    opponent = random.choice(
+        [
+            p
+            for p in db_participants
+            if p != game.white and p.tournament == game.white.tournament
+        ]
+    )
 
-    create_data = game_create_data(game.white, opponent, 0).json()
+    create_data = game_create_data(game.white, opponent, game.round_number).json()
 
     response = test_client.post(games_url, data=create_data)
     assert response.status_code == 400

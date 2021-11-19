@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, or_
 
@@ -11,21 +9,9 @@ from ..models import Game, GameCreate, GameRead, GameUpdate, Participant
 router = APIRouter(tags=["games"])
 
 
-@router.get("/games", response_model=List[GameRead])
-async def read_games(player_id: int = None, session: Session = Depends(get_session)):
-    if not player_id:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Please provide player_id")
-
-    filters = []
-    if player_id:
-        filters.append(
-            or_(
-                Game.white_id == player_id,
-                Game.black_id == player_id,
-            )
-        )
-
-    games = select_instances(session, Game, filters=filters)
+@router.get("/games", response_model=list[GameRead])
+async def read_games(session: Session = Depends(get_session)):
+    games = select_instances(session, Game)
     return games
 
 
