@@ -3,7 +3,7 @@ from typing import List
 
 from sqlmodel import Session, SQLModel, create_engine
 
-from app.models import Game, Participant, Player, Tournament  # noqa: F401
+from app.schemas import Game, Participant, Player, Tournament  # noqa: F401
 from app.settings import settings
 from tests.helpers import (
     participant_create_data,

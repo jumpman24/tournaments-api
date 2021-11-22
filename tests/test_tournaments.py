@@ -1,8 +1,8 @@
 import json
 import random
 
-from app.models import ParticipantRead
-from app.models.tournament import TournamentRead
+from app.schemas import ParticipantRead
+from app.schemas.tournament import TournamentRead
 from tests.helpers import tournament_create_data
 
 

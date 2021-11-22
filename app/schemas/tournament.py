@@ -1,22 +1,4 @@
-from typing import List, Optional
-
-from sqlmodel import Field, Relationship, SQLModel
-
-from .participant import Participant
-
-
-class Tournament(SQLModel, table=True):
-    id: Optional[int] = Field(nullable=False, primary_key=True)
-    name: str
-    number_of_rounds: int
-    mm_floor: int
-    mm_bar: int
-    mm_dense: bool
-    handicap_bar: int
-    handicap_max: int
-    handicap_correction: int
-
-    participants: List["Participant"] = Relationship(back_populates="tournament")
+from sqlmodel import SQLModel
 
 
 class TournamentCreate(SQLModel):

@@ -1,27 +1,6 @@
-from typing import Optional
+from sqlmodel import SQLModel
 
-from mcmahon.game import Result
-from sqlmodel import Field, Relationship, SQLModel
-
-from .participant import Participant
-
-
-class Game(SQLModel, table=True):
-    id: Optional[int] = Field(nullable=False, primary_key=True)
-    white_id: int = Field(foreign_key="participant.id")
-    black_id: int = Field(foreign_key="participant.id")
-    round_number: int
-    handicap: int
-    result: Result
-    by_default: bool
-
-    white: "Participant" = Relationship(
-        sa_relationship_kwargs={"foreign_keys": "Game.white_id"}
-    )
-
-    black: "Participant" = Relationship(
-        sa_relationship_kwargs={"foreign_keys": "Game.black_id"}
-    )
+from ..enums import GameResult
 
 
 class GameCreate(SQLModel):
@@ -29,7 +8,7 @@ class GameCreate(SQLModel):
     black_id: int
     round_number: int
     handicap: int
-    result: Result
+    result: GameResult
     by_default: bool
 
     class Config:
@@ -39,7 +18,7 @@ class GameCreate(SQLModel):
                 "black_id": 2,
                 "round_number": 0,
                 "handicap": 0,
-                "result": Result.UNKNOWN.value,
+                "result": GameResult.UNKNOWN.value,
                 "by_default": False,
             }
         }
@@ -47,14 +26,14 @@ class GameCreate(SQLModel):
 
 class GameUpdate(SQLModel):
     handicap: int
-    result: Result
+    result: GameResult
     by_default: bool
 
     class Config:
         schema_extra = {
             "example": {
                 "handicap": 0,
-                "result": Result.UNKNOWN.value,
+                "result": GameResult.UNKNOWN.value,
                 "by_default": False,
             }
         }
@@ -66,7 +45,7 @@ class GameRead(SQLModel):
     black_id: int
     round_number: int
     handicap: int
-    result: Result
+    result: GameResult
     by_default: bool
 
     class Config:
@@ -77,7 +56,7 @@ class GameRead(SQLModel):
                 "black_id": 2,
                 "round_number": 0,
                 "handicap": 0,
-                "result": Result.WHITE_WINS.value,
+                "result": GameResult.WHITE_WINS.value,
                 "by_default": False,
             }
         }

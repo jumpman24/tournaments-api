@@ -3,8 +3,8 @@ from sqlmodel import Session
 
 from ..crud import delete_instance, insert_instance, select_instances, update_instance
 from ..dependencies import get_session
-from ..models import ParticipantRead
-from ..models.tournament import Tournament, TournamentCreate, TournamentRead
+from ..models import Tournament
+from ..schemas import ParticipantRead, TournamentCreate, TournamentRead
 
 
 router = APIRouter(tags=["tournaments"])

@@ -3,12 +3,8 @@ from sqlmodel import Session
 
 from ..crud import delete_instance, insert_instance, select_instances, update_instance
 from ..dependencies import get_session
-from ..models.participant import (
-    Participant,
-    ParticipantCreate,
-    ParticipantRead,
-    ParticipantUpdate,
-)
+from ..models import Participant, Player, Scoring, Tournament
+from ..schemas import ParticipantCreate, ParticipantRead, ParticipantUpdate
 
 
 router = APIRouter(tags=["participants"])
@@ -39,7 +35,25 @@ def create_participant(
     data: ParticipantCreate,
     session: Session = Depends(get_session),
 ):
-    participant = insert_instance(session, Participant.from_orm(data))
+    tournament = session.get(Tournament, data.tournament_id)
+
+    if not tournament:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Tournament not found")
+
+    player = session.get(Player, data.player_id)
+    if not player:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Player not found")
+
+    participant = Participant.from_orm(data)
+
+    for round_number in range(tournament.number_of_rounds):
+        if round_number in data.rounds:
+            scoring = Scoring.from_orm(data.rounds[round_number])
+        else:
+            scoring = Scoring(round_number=round_number)
+        participant.rounds.append(scoring)
+
+    insert_instance(session, participant)
     return participant
 
 

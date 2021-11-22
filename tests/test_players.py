@@ -1,7 +1,7 @@
 import json
 import random
 
-from app.models.player import PlayerRead
+from app.schemas.player import PlayerRead
 from tests.helpers import player_create_data
 
 

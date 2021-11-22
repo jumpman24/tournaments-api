@@ -186,7 +186,7 @@ idna = ">=2.0.0"
 name = "faker"
 version = "9.8.2"
 description = "Faker is a Python package that generates fake data for you."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -351,14 +351,13 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "mcmahon"
-version = "0.1.0"
+version = "0.3.0"
 description = "McMahon Tournament Manager"
 category = "main"
 optional = false
-python-versions = ">=3.9,<3.11"
+python-versions = ">=3.8,<3.11"
 
 [package.dependencies]
-Faker = ">=9.8.0,<10.0.0"
 scipy = ">=1.7.2,<2.0.0"
 
 [[package]]
@@ -518,7 +517,7 @@ testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtuale
 name = "python-dateutil"
 version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 
@@ -674,7 +673,7 @@ full = ["itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests", "gra
 name = "text-unidecode"
 version = "1.3"
 description = "The most basic Text::Unidecode port"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -797,7 +796,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.9,<3.11"
-content-hash = "1c4e91b2cea77f8bceb12c68da06d88e1a71eb77627dc000643b88013bd03076"
+content-hash = "c613cb6e32664905438a2ffb184b8d02da13c68b3933a763a689be87b69f3ab1"
 
 [metadata.files]
 alembic = [
@@ -1095,8 +1094,8 @@ markupsafe = [
     {file = "MarkupSafe-2.0.1.tar.gz", hash = "sha256:594c67807fb16238b30c44bdf74f36c02cdf22d1c8cda91ef8a0ed8dabf5620a"},
 ]
 mcmahon = [
-    {file = "mcmahon-0.1.0-py3-none-any.whl", hash = "sha256:380be320d9d00babd732e9f2c52103ccccff61e52599ee5bc797c5a055e6f1d5"},
-    {file = "mcmahon-0.1.0.tar.gz", hash = "sha256:3caad28565566bc16a90b7c848c18e102b4ad521ee56a9bd4a91b2353409dc87"},
+    {file = "mcmahon-0.3.0-py3-none-any.whl", hash = "sha256:709c7d9e1f55210ae487002c1051b6133cb08c499a9bdeac2e36f7ee8924078f"},
+    {file = "mcmahon-0.3.0.tar.gz", hash = "sha256:c9da7477f1498b3823df2e995102e4f68e8fa9c8aa4eb0d584e97b5e082ee4f6"},
 ]
 nodeenv = [
     {file = "nodeenv-1.6.0-py2.py3-none-any.whl", hash = "sha256:621e6b7076565ddcacd2db0294c0381e01fd28945ab36bcf00f41c5daf63bef7"},

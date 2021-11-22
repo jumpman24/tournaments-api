@@ -1,8 +1,9 @@
 import json
 import random
 
-from app.models import ParticipantRead
-from app.models.participant import ParticipantUpdate
+from app.enums import ScoringStatus
+from app.schemas import ParticipantRead, ScoringCreate
+from app.schemas.participant import ParticipantUpdate
 from tests.helpers import participant_create_data
 
 
@@ -46,6 +47,23 @@ def test_create_participant(test_client, participants_url, db_players, db_tourna
     player = random.choice(db_players)
 
     create_data = participant_create_data(tournament, player).json()
+
+    response = test_client.post(participants_url, data=create_data)
+    assert response.ok
+    assert ParticipantRead.validate(response.json())
+
+
+def test_create_participant_with_scoring(
+    test_client, participants_url, db_players, db_tournaments
+):
+    tournament = random.choice(db_tournaments)
+    player = random.choice(db_players)
+
+    create_data = participant_create_data(
+        tournament,
+        player,
+        rounds={0: ScoringCreate(round_number=0, status=ScoringStatus.BYE)},
+    ).json()
 
     response = test_client.post(participants_url, data=create_data)
     assert response.ok

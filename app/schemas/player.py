@@ -1,18 +1,4 @@
-from typing import List, Optional
-
-from sqlmodel import Field, Relationship, SQLModel
-
-from .participant import Participant
-
-
-class Player(SQLModel, table=True):
-    id: Optional[int] = Field(nullable=False, primary_key=True)
-    last_name: str
-    first_name: str
-    country: str
-    rating: int
-
-    participants: List["Participant"] = Relationship(back_populates="player")
+from sqlmodel import SQLModel
 
 
 class PlayerCreate(SQLModel):

@@ -1,9 +1,8 @@
 import json
 import random
 
-from mcmahon.game import Result
-
-from app.models.game import GameRead, GameUpdate
+from app.enums import GameResult
+from app.schemas.game import GameRead, GameUpdate
 from tests.helpers import game_create_data
 
 
@@ -38,7 +37,7 @@ def test_get_game(test_client, games_url, db_games):
 def test_update_game(test_client, games_url, db_games):
     game = random.choice(db_games)
 
-    update_data = GameUpdate(handicap=2, result=Result.WHITE_WINS, by_default=False)
+    update_data = GameUpdate(handicap=2, result=GameResult.WHITE_WINS, by_default=False)
 
     response = test_client.put(f"{games_url}/{game.id}", data=update_data.json())
     assert response.ok
@@ -82,7 +81,12 @@ def test_create_game_bad_request(
     tournament_1, tournament_2 = random.sample(db_tournaments, k=2)
     white = random.choice([p for p in db_participants if p.tournament is tournament_1])
     black = random.choice(
-        [p for p in db_participants if p.tournament is tournament_2 and p is not white]
+        [
+            participant
+            for participant in db_participants
+            if participant.tournament == tournament_2
+            and participant.player != white.player
+        ]
     )
 
     create_data = game_create_data(white, black, 0).json()
@@ -128,7 +132,7 @@ def test_create_game_already_played(
 def test_update_game_not_found(test_client, games_url, db_games):
     fake_id = max(game.id for game in db_games) + 1
 
-    update_data = GameUpdate(handicap=2, result=Result.WHITE_WINS, by_default=False)
+    update_data = GameUpdate(handicap=2, result=GameResult.WHITE_WINS, by_default=False)
 
     response = test_client.put(f"{games_url}/{fake_id}", data=update_data.json())
     assert response.status_code == 404

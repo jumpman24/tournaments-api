@@ -3,7 +3,8 @@ from sqlmodel import Session, or_
 
 from ..crud import delete_instance, insert_instance, select_instances, update_instance
 from ..dependencies import get_session
-from ..models import Game, GameCreate, GameRead, GameUpdate, Participant
+from ..models import Game, Participant
+from ..schemas import GameCreate, GameRead, GameUpdate
 
 
 router = APIRouter(tags=["games"])
