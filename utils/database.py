@@ -3,7 +3,7 @@ from typing import List
 
 from sqlmodel import Session, SQLModel, create_engine
 
-from app.schemas import Game, Participant, Player, Tournament  # noqa: F401
+from app.models import Game, Participant, Player, Tournament  # noqa: F401
 from app.settings import settings
 from tests.helpers import (
     participant_create_data,
@@ -60,8 +60,10 @@ if __name__ == "__main__":
         help="Database URL",
         default=settings.database_url,
     )
-    parser.add_argument("--players", type=int, default=100, help="Number of players")
-    parser.add_argument("--tournaments", type=int, default=20, help="Number of players")
+    parser.add_argument("--players", type=int, default=32, help="Number of players")
+    parser.add_argument(
+        "--tournaments", type=int, default=2, help="Number of tournaments"
+    )
     args = parser.parse_args()
 
     print(f"Target database URL: {args.database_url}")

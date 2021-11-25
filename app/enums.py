@@ -1,6 +1,12 @@
 from enum import Enum
 
 
+class TournamentStatus(str, Enum):
+    CREATED = "created"
+    STARTED = "started"
+    FINISHED = "finished"
+
+
 class GameResult(str, Enum):
     UNKNOWN = "unknown"
     WHITE_WINS = "white_wins"

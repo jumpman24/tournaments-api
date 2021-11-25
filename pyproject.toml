@@ -18,7 +18,7 @@ description = "McMahon Tournament API"
 authors = ["Oleksandr Hiliazov <oleksandr.hiliazov@eleks.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.11"
+python = ">=3.9,<3.10"
 fastapi = {extras = ["all"], version = "^0.70.0"}
 alembic = "^1.7.5"
 sqlmodel = "^0.0.4"

@@ -1,4 +1,4 @@
-from typing import List, Type, TypeVar
+from typing import Type, TypeVar
 
 from sqlmodel import Session, SQLModel, and_, select
 
@@ -13,7 +13,7 @@ def select_instances(
     class_: Type[_SQLModel],
     *,
     filters: list = None,
-) -> List[_SQLModel]:
+) -> list[_SQLModel]:
     stmt = select(class_)
 
     if filters:

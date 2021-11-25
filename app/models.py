@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
-from .enums import GameResult, ScoringStatus
+from .enums import GameResult, ScoringStatus, TournamentStatus
 
 
 class Player(SQLModel, table=True):
@@ -25,6 +25,8 @@ class Tournament(SQLModel, table=True):
     handicap_bar: int
     handicap_max: int
     handicap_correction: int
+
+    status: TournamentStatus = TournamentStatus.CREATED
 
     participants: List["Participant"] = Relationship(back_populates="tournament")
 
@@ -52,11 +54,11 @@ class Game(SQLModel, table=True):
     result: GameResult
     by_default: bool
 
-    white: "Participant" = Relationship(
+    white: Participant = Relationship(
         sa_relationship_kwargs={"foreign_keys": "Game.white_id"}
     )
 
-    black: "Participant" = Relationship(
+    black: Participant = Relationship(
         sa_relationship_kwargs={"foreign_keys": "Game.black_id"}
     )
 
@@ -69,4 +71,4 @@ class Scoring(SQLModel, table=True):
     points_x2: int = 0
     points_x2_virtual: int = 0
 
-    participant: "Participant" = Relationship(back_populates="rounds")
+    participant: Participant = Relationship(back_populates="rounds")

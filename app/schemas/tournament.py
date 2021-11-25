@@ -1,5 +1,7 @@
 from sqlmodel import SQLModel
 
+from app.enums import TournamentStatus
+
 
 class TournamentCreate(SQLModel):
     name: str
@@ -36,6 +38,7 @@ class TournamentRead(SQLModel):
     handicap_bar: int
     handicap_max: int
     handicap_correction: int
+    status: TournamentStatus
 
     class Config:
         schema_extra = {
@@ -49,5 +52,6 @@ class TournamentRead(SQLModel):
                 "handicap_bar": -30,
                 "handicap_max": 9,
                 "handicap_correction": -2,
+                "status": TournamentStatus.CREATED.value,
             }
         }
